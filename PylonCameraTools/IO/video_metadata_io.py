@@ -16,7 +16,7 @@ class VideoSaver:
                                                 fps=fps)
 
         
-        self.meta_data_file = open(name + ".csv", 'w', encoding='utf-8')
+        self.meta_data_file = open(os.path.splitext(name)[0] + ".csv", 'w', encoding='utf-8')
 
     def convert_frame(self, camera_grabbed_frame):
         # Access the image data

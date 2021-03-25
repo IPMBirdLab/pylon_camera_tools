@@ -32,6 +32,10 @@ from pypylon import pylon
 from pypylon import genicam
 import cv2
 from time import sleep
+
+import sys
+sys.path.insert(0, "/home/devuser/Documents/workspace/camera/pylon_camera_tools/")
+
 from PylonCameraTools.IO import HuffyuvLosslessReader, HuffyuvLosslessSaver, \
     H264LossLessReader, H264LossLessSaver, \
     RawVideoReader, RawVideoSaver, VideoReader, VideoSaver
@@ -39,13 +43,18 @@ from PylonCameraTools.utils.camera_utils import adjust_croped_offset, \
     initialize_camera, set_configurations_for, \
     print_camera_status, enable_metadate_gathering
 
+import datetime
+
 
 run_the_loop = True
 
 def main_loop_writer(config):
     global run_the_loop
 
-    saver = VideoSaver(HuffyuvLosslessSaver, config["name"], config["width"], config["height"], config["fps"])
+    saver = VideoSaver(H264LossLessSaver,
+                        os.path.splitext(config["name"])[0],
+                        (config["width"], config["height"]),
+                        config["fps"])
 
     # conecting to the first available camera
     camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
@@ -120,12 +129,12 @@ def main_loop_reader(config):
     del reader
     cv2.destroyAllWindows()
 
-
+dt_string = f"{datetime.date.year}-{datetime.date.month}-{datetime.date.day}_{datetime.time.hour}-{datetime.time.minute}"
 config = {
-    "name": "/home/devuser/Documents/workspace/data/experiment3_400-400.m4v",
-    "width": 400,
-    "height": 400,
-    "fps": 40,
+    "name": f"/home/devuser/Documents/workspace/data/experiment30_1600_1200.m4v",
+    "width": 1600,
+    "height": 1200,
+    "fps": 25,
 }
 
 if __name__ == "__main__":
@@ -136,7 +145,7 @@ if __name__ == "__main__":
     print(f"******Running Application with PID: {os.getpid()}")
     print("******press Ctrl+C to terminate.\n\n")
 
-    # main_loop_writer(config)
-    # sleep(1)
+    main_loop_writer(config)
+    sleep(1)
     run_the_loop = True
     main_loop_reader(config)
